@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go Fiber 框架架构</title>
+    <style>
+        :root {
+            --primary: #00ACD7;
+            --secondary: #75C46B;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --gray: #e9ecef;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        header h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--dark);
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .architecture-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .architecture-map {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .layer {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .component {
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 15px;
+            margin: 0 15px;
+            min-width: 150px;
+            text-align: center;
+            transition: var(--transition);
+            border-left: 4px solid var(--primary);
+        }
+
+        .component:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .component h3 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+
+        .component p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .http-layer .component {
+            border-left-color: #e74c3c;
+        }
+
+        .core-layer .component {
+            border-left-color: var(--primary);
+        }
+
+        .context-layer .component {
+            border-left-color: var(--secondary);
+        }
+
+        .middleware-layer .component {
+            border-left-color: #9b59b6;
+        }
+
+        .utils-layer .component {
+            border-left-color: #f39c12;
+        }
+
+        .connection-vertical {
+            position: absolute;
+            width: 2px;
+            background-color: #ddd;
+            z-index: 0;
+        }
+
+        .connection-horizontal {
+            position: absolute;
+            height: 2px;
+            background-color: #ddd;
+            z-index: 0;
+        }
+
+        .description {
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin: 40px auto;
+            max-width: 800px;
+        }
+
+        .description h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .description p {
+            margin-bottom: 15px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .layer {
+                flex-direction: column;
+                align-items: center;
+                margin-bottom: 50px;
+            }
+
+            .component {
+                margin: 10px 0;
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Go Fiber 框架架构</h1>
+        <p>Fiber 是一个基于 Fasthttp 的 Go Web 框架，受 Express 启发，专注于高性能和零内存分配</p>
+    </header>
+
+    <div class="architecture-container">
+        <div class="architecture-map">
+            <!-- HTTP 服务器层 -->
+            <div class="layer http-layer">
+                <div class="component">
+                    <h3>HTTP 服务器</h3>
+                    <p>基于 Fasthttp 引擎</p>
+                </div>
+            </div>
+
+            <!-- 核心层 -->
+            <div class="layer core-layer">
+                <div class="component">
+                    <h3>App</h3>
+                    <p>框架核心对象</p>
+                </div>
+                <div class="component">
+                    <h3>Router</h3>
+                    <p>路由管理与匹配</p>
+                </div>
+                <div class="component">
+                    <h3>路由树</h3>
+                    <p>优化的路由匹配算法</p>
+                </div>
+            </div>
+
+            <!-- 上下文和请求处理层 -->
+            <div class="layer context-layer">
+                <div class="component">
+                    <h3>Context</h3>
+                    <p>请求上下文管理</p>
+                </div>
+                <div class="component">
+                    <h3>Request</h3>
+                    <p>HTTP 请求处理</p>
+                </div>
+                <div class="component">
+                    <h3>Response</h3>
+                    <p>HTTP 响应生成</p>
+                </div>
+                <div class="component">
+                    <h3>错误处理</h3>
+                    <p>统一错误管理</p>
+                </div>
+            </div>
+
+            <!-- 中间件层 -->
+            <div class="layer middleware-layer">
+                <div class="component">
+                    <h3>中间件系统</h3>
+                    <p>请求处理链</p>
+                </div>
+                <div class="component">
+                    <h3>路由组</h3>
+                    <p>Group 路由分组</p>
+                </div>
+                <div class="component">
+                    <h3>挂载系统</h3>
+                    <p>Mount 子应用</p>
+                </div>
+            </div>
+
+            <!-- 工具和扩展层 -->
+            <div class="layer utils-layer">
+                <div class="component">
+                    <h3>Logger</h3>
+                    <p>日志系统</p>
+                </div>
+                <div class="component">
+                    <h3>模板引擎</h3>
+                    <p>视图渲染</p>
+                </div>
+                <div class="component">
+                    <h3>静态文件</h3>
+                    <p>静态资源服务</p>
+                </div>
+                <div class="component">
+                    <h3>工具集</h3>
+                    <p>辅助功能与扩展</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 简单的连接线 -->
+        <div class="lines">
+            <!-- 垂直连接线 -->
+            <div class="connection-vertical" style="left: 50%; top: 70px; height: 500px;"></div>
+
+            <!-- 水平连接线 -->
+            <div class="connection-horizontal" style="top: 140px; left: 20%; width: 60%;"></div>
+            <div class="connection-horizontal" style="top: 250px; left: 25%; width: 50%;"></div>
+            <div class="connection-horizontal" style="top: 370px; left: 15%; width: 70%;"></div>
+            <div class="connection-horizontal" style="top: 480px; left: 10%; width: 80%;"></div>
+        </div>
+    </div>
+
+    <div class="description">
+        <h2>架构说明</h2>
+        <p><strong>HTTP 服务器层</strong>：Fiber 构建在 fasthttp 之上，fasthttp 是 Go 中最快的 HTTP 引擎，提供高性能的 HTTP 请求处理能力。</p>
+
+        <p><strong>App</strong>：中央对象，负责配置服务器、管理上下文池、保存路由堆栈和协调所有组件。它还包含用于自定义框架行为的钩子。</p>
+
+        <p><strong>Router & 路由树</strong>：管理 URL 路径与处理函数的映射关系，使用优化的树形结构来提高路由匹配性能。支持参数提取、约束条件和不同的 HTTP 方法。</p>
+
+        <p><strong>Context</strong>：请求生命周期中的核心对象，包含请求和响应信息。Fiber 通过上下文池回收和重用 Context 对象，减少内存分配。</p>
+
+        <p><strong>中间件系统</strong>：提供请求处理链，中间件可以在请求处理前后执行操作，例如认证、日志记录或响应压缩。</p>
+
+        <p><strong>路由组 & 挂载系统</strong>：允许将相关路由组织在一起，并支持将子应用程序挂载到主应用下，便于大型 API 的模块化设计。</p>
+
+        <p><strong>工具和扩展</strong>：包括日志系统、模板渲染、静态文件服务等增强框架功能的组件。</p>
+    </div>
+
+    <footer>
+        <p>Go Fiber 框架 - 高性能 Web 框架 | 版本 v3.0.0-beta.4</p>
+    </footer>
+</body>
+
+</html>
