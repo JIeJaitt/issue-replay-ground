@@ -1,2 +1,3 @@
-# issue-replay-ground
-🔁 Replay | 🐞 Reproduce | 🔧 Fix – a private playground for GitHub issues. Local sandbox for replaying, reproducing &amp; patching GitHub issues / PRs offline. Clone any repo, checkout the exact commit, run the failing test, fix the bug, close the loop—without touching upstream until it’s green.
+Welcome to issue-replay-ground 👋
+
+This is my local lab where I download, replay, and patch issues/PRs from any GitHub project. One command → exact commit → failing test → green patch → confidence before I ever comment on the real thread.
